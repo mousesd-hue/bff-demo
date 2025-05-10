@@ -9,15 +9,15 @@ services:
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=demo_db
     volumes:
-      - ./bff/db_init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./backend/db_init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5432:5432"
 
-  bff:
+  bff_web:
     image: python:3.11
-    working_dir: /app
+    working_dir: /bff_web
     volumes:
-      - ./bff:/app
+      - ./bff_web:/bff_web
     env_file:
       - .env
     command: sh -c "pip install -r requirements.txt && python app_postgres.py"
@@ -26,11 +26,33 @@ services:
     ports:
       - "5000:5000"
 
-  frontend:
+  bff_mobile:
+    image: python:3.11
+    working_dir: /bff_mobile
+    volumes:
+      - ./bff_mobile:/bff_mobile
+    env_file:
+      - .env
+    command: sh -c "pip install -r requirements.txt && python app_mobile.py"
+    depends_on:
+      - db
+    ports:
+      - "5001:5001"
+
+  frontend_web:
     image: nginx:alpine
     volumes:
-      - ./frontend/index.html:/usr/share/nginx/html/index.html
+      - ./frontend_web/index.html:/usr/share/nginx/html/index.html
     ports:
-      - "80:80"
+      - "8080:80"
     depends_on:
-      - bff
+      - bff_web
+
+  frontend_mobile:
+    image: nginx:alpine
+    volumes:
+      - ./frontend_mobile/index.html:/usr/share/nginx/html/index.html
+    ports:
+      - "8081:80"
+    depends_on:
+      - bff_mobile

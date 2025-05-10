@@ -1,6 +1,6 @@
 # BFF con Flask
 
-Este proyecto demuestra el patrón Backend for Frontend (BFF) utilizando Flask como intermediario entre un frontend simple y un backend simulado con POSTGRES Server. Adicionalmente se tiene una versión para probar el funcionamiento del BFF.
+Este proyecto demuestra el patrón Backend for Frontend (BFF) utilizando Flask como intermediario entre un frontend simple y un backend simulado con POSTGRES Server. Se hace la simulación como si hubieran 2 frontend, uno para una página web y otro para una aplicación de celular.
 
 ## Estructura
 

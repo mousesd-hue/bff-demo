@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Usuarios (Demo BFF)</title>
+  <style>
+    body { font-family: sans-serif; margin: 2em; }
+    li { margin-bottom: 0.5em; }
+    .error { color: red; }
+    .success { color: green; }
+    .loading { color: gray; }
+  </style>
+</head>
+<body>
+  <h1>Usuarios</h1>
+  
+  <p id="status" class="loading">Conectando con el BFF...</p>
+  <ul id="users"></ul>
+
+  <script>
+    const API_URL = 'http://localhost:5000/api/users';
+    const status = document.getElementById("status");
+
+    const loadUsers = () => {
+      status.textContent = "Cargando usuarios desde BFF...";
+      status.className = "loading";
+
+      fetch(API_URL)
+        .then(res => res.json())
+        .then(data => {
+          const ul = document.getElementById('users');
+          ul.innerHTML = '';
+          data.forEach(user => {
+            const li = document.createElement('li');
+            li.textContent = user.name;
+            ul.appendChild(li);
+          });
+          status.textContent = `✅ ${data.length} usuarios cargados desde el BFF`;
+          status.className = "success";
+        })
+        .catch(err => {
+          status.textContent = "❌ Error al conectar con el BFF.";
+          status.className = "error";
+          console.error(err);
+        });
+    };
+
+    loadUsers();
+  </script>
+</body>
+</html>
