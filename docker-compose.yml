@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=demo_db
+    volumes:
+      - ./bff/db_init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+
+  bff:
+    image: python:3.11
+    working_dir: /app
+    volumes:
+      - ./bff:/app
+    env_file:
+      - .env
+    command: sh -c "pip install -r requirements.txt && python app_postgres.py"
+    depends_on:
+      - db
+    ports:
+      - "5000:5000"
+
+  frontend:
+    image: nginx:alpine
+    volumes:
+      - ./frontend/index.html:/usr/share/nginx/html/index.html
+    ports:
+      - "80:80"
+    depends_on:
+      - bff
